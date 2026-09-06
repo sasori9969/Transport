@@ -8,6 +8,7 @@ import { initializeProduction, refreshProduction } from './production.js';
 import { initializeStorage, refreshStorage } from './storage.js';
 import { initializeMarket, refreshMarket } from './market.js';
 import { initializeResearch, refreshResearch } from './research.js';
+import { initializeMachines, refreshMachines } from './machines.js';
 
 // ============================================================
 // SPIELSTATUS
@@ -33,6 +34,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     initializeLogout();
     window.addEventListener('market-changed', handleMarketChanged);
     window.addEventListener('research-changed', handleResearchChanged);
+    window.addEventListener('machines-changed', handleMachinesChanged);
 
     try {
         await initializeGame();
@@ -73,6 +75,7 @@ export async function initializeGame() {
     await initializeStorage(currentCompany);
     await initializeMarket(currentCompany);
     await initializeResearch(currentCompany);
+    await initializeMachines(currentCompany, currentLocation);
 }
 
 // ============================================================
@@ -623,6 +626,10 @@ function initializeNavigation() {
             if (target === 'research') {
                 await refreshResearch();
             }
+
+            if (target === 'machines') {
+                await refreshMachines(currentCompany, currentLocation);
+            }
         });
     });
 }
@@ -754,6 +761,7 @@ async function reloadGameData() {
     await refreshStorage();
     await refreshMarket();
     await refreshResearch();
+    await refreshMachines(currentCompany, currentLocation);
 }
 
 async function handleMarketChanged() {
@@ -773,6 +781,17 @@ async function handleResearchChanged() {
     } catch (error) {
         console.error(
             'Fehler beim Aktualisieren nach einer Forschungsaktion:',
+            error
+        );
+    }
+}
+
+async function handleMachinesChanged() {
+    try {
+        await reloadGameData();
+    } catch (error) {
+        console.error(
+            'Fehler beim Aktualisieren nach einer Maschinenaktion:',
             error
         );
     }
