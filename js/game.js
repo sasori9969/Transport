@@ -6,7 +6,7 @@
 import { supabase, getCurrentUser } from './supabase.js';
 import { initializeProduction, refreshProduction } from './production.js';
 import { initializeStorage, refreshStorage } from './storage.js';
-import { initializeMarket, refreshMarket } from './market.js';
+import { initializeMarket, refreshMarket } from './market.js?v=20260906-market';
 import { initializeResearch, refreshResearch } from './research.js';
 import { initializeMachines, refreshMachines } from './machines.js';
 
@@ -234,6 +234,7 @@ function updateUserInterface() {
     updateOverview();
     updateProfitPerHour();
     updateProductionStatus();
+    updateFinanceOverview();
 }
 
 // ============================================================
@@ -547,6 +548,79 @@ async function updateProductionStatus() {
     } else {
         element.textContent =
             `${activeJobs} Aufträge laufen`;
+    }
+}
+
+// ============================================================
+// FINANZEN
+// ============================================================
+
+async function updateFinanceOverview() {
+    if (!currentCompany) {
+        return;
+    }
+
+    const [machinesResult, storageResult] = await Promise.all([
+        supabase
+            .from('machines')
+            .select(`
+                machine_types (
+                    purchase_price
+                )
+            `)
+            .eq('company_id', currentCompany.id),
+        supabase
+            .from('storage')
+            .select(`
+                quantity,
+                product_id,
+                products (
+                    base_price
+                )
+            `)
+            .eq('company_id', currentCompany.id)
+    ]);
+
+    if (machinesResult.error || storageResult.error) {
+        console.error(
+            'Fehler beim Laden der Finanzübersicht:',
+            machinesResult.error || storageResult.error
+        );
+        return;
+    }
+
+    const assets = (machinesResult.data || []).reduce(
+        (total, machine) => total + Number(
+            machine.machine_types?.purchase_price || 0
+        ),
+        0
+    );
+
+    const inventory = (storageResult.data || []).reduce(
+        (total, item) => {
+            const product = item.products || {};
+            const price = Number(
+                product.current_price ?? product.base_price ?? 0
+            );
+            return total + Number(item.quantity || 0) * price;
+        },
+        0
+    );
+
+    const cash = Number(currentProfile?.cash || 0);
+    const netWorth = cash + assets + inventory;
+
+    setFinanceValue('finance-cash', cash);
+    setFinanceValue('finance-assets', assets);
+    setFinanceValue('finance-inventory', inventory);
+    setFinanceValue('finance-net-worth', netWorth);
+}
+
+function setFinanceValue(id, value) {
+    const element = document.getElementById(id);
+
+    if (element) {
+        element.textContent = formatCurrency(value);
     }
 }
 
