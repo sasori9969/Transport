@@ -61,6 +61,7 @@ DECLARE
     v_base_price numeric;
     v_market_price numeric;
     v_base_sale_minutes numeric;
+    v_demand_per_hour numeric;
     v_expected_minutes numeric;
 BEGIN
     PERFORM public.assert_company_owner(p_company_id);
@@ -78,11 +79,13 @@ BEGIN
     SELECT
         p.base_price,
         COALESCE(mp.current_price, p.base_price),
-        COALESCE(p.market_base_sale_minutes, 30)
+        COALESCE(p.market_base_sale_minutes, 30),
+        COALESCE(p.market_demand_per_hour, 60)
       INTO
         v_base_price,
         v_market_price,
-        v_base_sale_minutes
+        v_base_sale_minutes,
+        v_demand_per_hour
       FROM public.products AS p
       LEFT JOIN public.market_prices AS mp
         ON mp.product_id = p.id
@@ -107,7 +110,14 @@ BEGIN
     -- nicht von einer frei gewählten Laufzeit.
     v_expected_minutes := LEAST(
         GREATEST(
-            COALESCE(v_base_sale_minutes, 30)
+            (
+                COALESCE(v_base_sale_minutes, 30)
+                + (
+                    p_quantity
+                    / GREATEST(COALESCE(v_demand_per_hour, 60), 0.01)
+                    * 60
+                )
+            )
             * power(
                 GREATEST(
                     p_price_per_unit / GREATEST(COALESCE(v_market_price, v_base_price), 0.01),
@@ -150,6 +160,63 @@ BEGIN
     RETURN v_listing;
 END;
 $$;
+
+-- Bereits offene Angebote erhalten ebenfalls einen mengenabhängigen
+-- finalen Zeitpunkt.
+UPDATE public.market_listings AS ml
+   SET finalizes_at = ml.created_at + (
+           LEAST(
+               GREATEST(
+                   (
+                       COALESCE(p.market_base_sale_minutes, 30)
+                       + (
+                           ml.quantity
+                           / GREATEST(COALESCE(p.market_demand_per_hour, 60), 0.01)
+                           * 60
+                       )
+                   )
+                   * power(
+                       GREATEST(
+                           ml.price_per_unit
+                           / GREATEST(COALESCE(mp.current_price, p.base_price), 0.01),
+                           0.05
+                       ),
+                       2
+                   ),
+                   0.5
+               ),
+               1440
+           ) * interval '1 minute'
+       ),
+       expires_at = ml.created_at + (
+           LEAST(
+               GREATEST(
+                   (
+                       COALESCE(p.market_base_sale_minutes, 30)
+                       + (
+                           ml.quantity
+                           / GREATEST(COALESCE(p.market_demand_per_hour, 60), 0.01)
+                           * 60
+                       )
+                   )
+                   * power(
+                       GREATEST(
+                           ml.price_per_unit
+                           / GREATEST(COALESCE(mp.current_price, p.base_price), 0.01),
+                           0.05
+                       ),
+                       2
+                   ),
+                   0.5
+               ),
+               1440
+           ) * interval '1 minute'
+       )
+  FROM public.products AS p
+  LEFT JOIN public.market_prices AS mp
+    ON mp.product_id = p.id
+ WHERE ml.product_id = p.id
+   AND ml.status = 'active';
 
 CREATE OR REPLACE FUNCTION public.process_market_listings()
 RETURNS integer
