@@ -9,6 +9,7 @@ let currentCompany = null;
 let productionInterval = null;
 let productionInitialized = false;
 const selectedQuantities = new Map();
+const selectedRecipes = new Map();
 
 // ============================================================
 // INITIALISIERUNG
@@ -427,6 +428,15 @@ function renderProduction({
             );
         });
 
+    container
+        .querySelectorAll('.production-recipe-select')
+        .forEach(select => {
+            selectedRecipes.set(
+                select.dataset.machineId,
+                select.value
+            );
+        });
+
     const jobsByMachine = new Map();
 
     jobs.forEach(job => {
@@ -710,7 +720,10 @@ function renderProductionSelector(
         }
 
         options += `
-            <option value="${escapeHtml(recipe.id)}">
+            <option
+                value="${escapeHtml(recipe.id)}"
+                ${recipe.id === selectedRecipeId ? 'selected' : ''}
+            >
                 ${escapeHtml(product.name)}
                 – ${formatDuration(
                     recipe.production_time_seconds * 1000
@@ -720,8 +733,17 @@ function renderProductionSelector(
     });
 
     const firstRecipe = recipes[0];
+    const selectedRecipeId =
+        selectedRecipes.get(machine.id) || firstRecipe.id;
     const selectedQuantity =
         selectedQuantities.get(machine.id) || 1;
+    const canStart = canProduceRecipe(
+        selectedRecipeId,
+        selectedQuantity,
+        recipes,
+        recipeMaterials,
+        ownedMaterials
+    );
 
     return `
         <div class="production-form">
@@ -752,23 +774,59 @@ function renderProductionSelector(
 
             <div class="production-material-requirements">
                 ${renderMaterialRequirements(
-                    firstRecipe.id,
+                    selectedRecipeId,
                     recipes,
                     recipeMaterials,
                     ownedMaterials,
-                    1
+                    Number(selectedQuantity) || 1
                 )}
             </div>
 
             <button
                 class="production-start-button"
                 data-start-production="${escapeHtml(machine.id)}"
+                ${canStart ? '' : 'disabled'}
             >
                 Produktion starten
             </button>
 
         </div>
     `;
+}
+
+function canProduceRecipe(
+    recipeId,
+    quantity,
+    recipes,
+    recipeMaterials,
+    ownedMaterials
+) {
+    const parsedQuantity = Number(quantity);
+
+    if (!Number.isInteger(parsedQuantity) || parsedQuantity < 1) {
+        return false;
+    }
+
+    const recipe = recipes.find(item => item.id === recipeId);
+
+    if (!recipe) {
+        return false;
+    }
+
+    const ownedByMaterial = new Map(
+        ownedMaterials.map(item => [
+            item.material_id,
+            Number(item.quantity || 0)
+        ])
+    );
+
+    return recipeMaterials
+        .filter(item => item.recipe_id === recipe.id)
+        .every(item => {
+            const required = Number(item.quantity || 0) * parsedQuantity;
+            const owned = ownedByMaterial.get(item.material_id) || 0;
+            return owned >= required;
+        });
 }
 
 function renderMaterialRequirements(
@@ -906,22 +964,43 @@ function attachProductionEvents(
         const requirements = form?.querySelector(
             '.production-material-requirements'
         );
+        const startButton = form?.querySelector(
+            '[data-start-production]'
+        );
 
         const updateRequirements = () => {
             if (!quantityInput || !requirements) {
                 return;
             }
 
+            const quantity = Number(quantityInput.value) || 1;
+
             requirements.innerHTML = renderMaterialRequirements(
                 select.value,
                 recipes,
                 recipeMaterials,
                 ownedMaterials,
-                Number(quantityInput.value) || 1
+                quantity
             );
+
+            if (startButton) {
+                startButton.disabled = !canProduceRecipe(
+                    select.value,
+                    quantity,
+                    recipes,
+                    recipeMaterials,
+                    ownedMaterials
+                );
+            }
         };
 
-        select.addEventListener('change', updateRequirements);
+        select.addEventListener('change', () => {
+            selectedRecipes.set(
+                select.dataset.machineId,
+                select.value
+            );
+            updateRequirements();
+        });
         quantityInput?.addEventListener('input', () => {
             selectedQuantities.set(
                 select.dataset.machineId,
@@ -929,6 +1008,8 @@ function attachProductionEvents(
             );
             updateRequirements();
         });
+
+        updateRequirements();
     });
 
     const startButtons = document.querySelectorAll(
