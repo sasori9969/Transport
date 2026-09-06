@@ -737,6 +737,13 @@ function renderProductionSelector(
         selectedRecipes.get(machine.id) || firstRecipe.id;
     const selectedQuantity =
         selectedQuantities.get(machine.id) || 1;
+    const canStart = canProduceRecipe(
+        selectedRecipeId,
+        selectedQuantity,
+        recipes,
+        recipeMaterials,
+        ownedMaterials
+    );
 
     return `
         <div class="production-form">
@@ -778,12 +785,48 @@ function renderProductionSelector(
             <button
                 class="production-start-button"
                 data-start-production="${escapeHtml(machine.id)}"
+                ${canStart ? '' : 'disabled'}
             >
                 Produktion starten
             </button>
 
         </div>
     `;
+}
+
+function canProduceRecipe(
+    recipeId,
+    quantity,
+    recipes,
+    recipeMaterials,
+    ownedMaterials
+) {
+    const parsedQuantity = Number(quantity);
+
+    if (!Number.isInteger(parsedQuantity) || parsedQuantity < 1) {
+        return false;
+    }
+
+    const recipe = recipes.find(item => item.id === recipeId);
+
+    if (!recipe) {
+        return false;
+    }
+
+    const ownedByMaterial = new Map(
+        ownedMaterials.map(item => [
+            item.material_id,
+            Number(item.quantity || 0)
+        ])
+    );
+
+    return recipeMaterials
+        .filter(item => item.recipe_id === recipe.id)
+        .every(item => {
+            const required = Number(item.quantity || 0) * parsedQuantity;
+            const owned = ownedByMaterial.get(item.material_id) || 0;
+            return owned >= required;
+        });
 }
 
 function renderMaterialRequirements(
@@ -921,19 +964,34 @@ function attachProductionEvents(
         const requirements = form?.querySelector(
             '.production-material-requirements'
         );
+        const startButton = form?.querySelector(
+            '[data-start-production]'
+        );
 
         const updateRequirements = () => {
             if (!quantityInput || !requirements) {
                 return;
             }
 
+            const quantity = Number(quantityInput.value) || 1;
+
             requirements.innerHTML = renderMaterialRequirements(
                 select.value,
                 recipes,
                 recipeMaterials,
                 ownedMaterials,
-                Number(quantityInput.value) || 1
+                quantity
             );
+
+            if (startButton) {
+                startButton.disabled = !canProduceRecipe(
+                    select.value,
+                    quantity,
+                    recipes,
+                    recipeMaterials,
+                    ownedMaterials
+                );
+            }
         };
 
         select.addEventListener('change', () => {
@@ -950,6 +1008,8 @@ function attachProductionEvents(
             );
             updateRequirements();
         });
+
+        updateRequirements();
     });
 
     const startButtons = document.querySelectorAll(
