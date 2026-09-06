@@ -784,3 +784,10 @@ function formatCurrency(value) {
         currency: 'EUR'
     }).format(Number(value) || 0);
 }
+
+function formatDateTime(date) {
+    return new Intl.DateTimeFormat('de-DE', {
+        dateStyle: 'short',
+        timeStyle: 'short'
+    }).format(date);
+}
