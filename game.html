@@ -1003,20 +1003,38 @@
 
                     <div id="finance-content">
 
-                        <div class="empty-state">
+                        <div class="finance-grid" aria-live="polite">
 
-                            <div class="empty-icon">
-                                $
+                            <article class="finance-card finance-card-highlight">
+                                <span class="finance-label">Verfügbares Kapital</span>
+                                <strong id="finance-cash">€0,00</strong>
+                                <p>Dein aktuelles Guthaben für Einkäufe und Investitionen.</p>
+                            </article>
+
+                            <article class="finance-card">
+                                <span class="finance-label">Anlagenwert</span>
+                                <strong id="finance-assets">€0,00</strong>
+                                <p>Geschätzter Wert deiner Produktionsmaschinen.</p>
+                            </article>
+
+                            <article class="finance-card">
+                                <span class="finance-label">Warenbestand</span>
+                                <strong id="finance-inventory">€0,00</strong>
+                                <p>Marktwert der fertigen Produkte im Lager.</p>
+                            </article>
+
+                        </div>
+
+                        <section class="finance-total-card">
+                            <div>
+                                <span class="finance-label">Geschätztes Gesamtvermögen</span>
+                                <strong id="finance-net-worth">€0,00</strong>
                             </div>
+                            <span class="finance-note">Kapital + Anlagen + Warenbestand</span>
+                        </section>
 
-                            <h3>
-                                Finanzen werden geladen
-                            </h3>
-
-                            <p>
-                                Finanzdaten werden später hier angezeigt.
-                            </p>
-
+                        <div id="finance-feedback" class="finance-feedback">
+                            Werte werden aus deinem aktuellen Spielstand berechnet.
                         </div>
 
                     </div>

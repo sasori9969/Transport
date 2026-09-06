@@ -1565,6 +1565,86 @@ img {
 }
 
 /* =========================================================
+   FINANCE
+   ========================================================= */
+
+.finance-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.finance-card,
+.finance-total-card {
+    min-width: 0;
+    padding: 20px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-panel);
+}
+
+.finance-card-highlight {
+    border-color: rgba(201, 162, 39, 0.35);
+    background: linear-gradient(135deg, rgba(201, 162, 39, 0.1), var(--bg-panel));
+}
+
+.finance-label {
+    display: block;
+    color: var(--text-muted);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.finance-card strong,
+.finance-total-card strong {
+    display: block;
+    margin-top: 8px;
+    color: var(--text-primary);
+    font-size: 24px;
+    line-height: 1.2;
+}
+
+.finance-card-highlight strong,
+.finance-total-card strong {
+    color: var(--gold-light);
+}
+
+.finance-card p {
+    margin: 10px 0 0;
+    color: var(--text-secondary);
+    font-size: 13px;
+}
+
+.finance-total-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    border-color: rgba(201, 162, 39, 0.28);
+}
+
+.finance-total-card strong {
+    font-size: 30px;
+}
+
+.finance-note,
+.finance-feedback {
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+.finance-feedback {
+    margin-top: 16px;
+    padding: 14px 16px;
+    border: 1px dashed var(--border-light);
+    border-radius: var(--radius-small);
+    background: rgba(255, 255, 255, 0.015);
+}
+
+/* =========================================================
    MESSAGES / LOADING
    ========================================================= */
 
@@ -1880,8 +1960,14 @@ img {
     .production-machines,
     .production-grid,
     .research-grid,
-    .machines-grid {
+    .machines-grid,
+    .finance-grid {
         grid-template-columns: 1fr;
+    }
+
+    .finance-total-card {
+        align-items: flex-start;
+        flex-direction: column;
     }
 
     .production-machine-stats {
