@@ -457,7 +457,7 @@ function renderListingRows(listings, prices) {
         return `
             <tr>
                 <td>${escapeHtml(product.name || 'Produkt')}</td>
-                <td>${formatNumber(listing.remaining_quantity, 2)} ${escapeHtml(product.unit || '')}</td>
+                <td>${formatNumber(listing.remaining_quantity, 0)} ${escapeHtml(product.unit || '')}</td>
                 <td>${formatCurrency(listing.price_per_unit)}</td>
                 <td>${formatCurrency(listing.total_revenue)}</td>
                 <td>${formatSaleTime(expectedMinutes)}</td>
@@ -586,8 +586,8 @@ function attachMarketEvents(purchasePlan) {
             const quantity = parseQuantity(quantityInput?.value);
             const price = parseQuantity(priceInput?.value);
 
-            if (!Number.isFinite(quantity) || quantity <= 0) {
-                showMarketMessage('Bitte eine gültige Menge eingeben.', 'error');
+            if (!Number.isInteger(quantity) || quantity <= 0) {
+                showMarketMessage('Bitte eine ganze Stückzahl eingeben.', 'error');
                 return;
             }
 
