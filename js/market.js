@@ -616,7 +616,12 @@ function attachMarketEvents(purchasePlan) {
             button.disabled = false;
 
             if (error) {
-                console.error('Fehler beim Erstellen des Marktangebots:', error);
+                console.error('Fehler beim Erstellen des Marktangebots:', {
+                    code: error?.code,
+                    message: error?.message,
+                    details: error?.details,
+                    hint: error?.hint
+                });
                 showMarketMessage(translateMarketError(error), 'error');
                 return;
             }
@@ -676,6 +681,18 @@ function translateMarketError(error) {
 
     if (lower.includes('not enough product quantity')) {
         return 'Nicht genügend fertige Produkte im Lager verfügbar.';
+    }
+
+    if (lower.includes('whole positive')) {
+        return 'Die Verkaufsmenge muss eine ganze positive Stückzahl sein.';
+    }
+
+    if (lower.includes('product not found')) {
+        return 'Das ausgewählte Produkt wurde nicht gefunden.';
+    }
+
+    if (lower.includes('listing price')) {
+        return 'Der Verkaufspreis muss größer als 0 sein.';
     }
 
     if (lower.includes('storage')) {

@@ -6,7 +6,7 @@
 import { supabase, getCurrentUser } from './supabase.js';
 import { initializeProduction, refreshProduction } from './production.js';
 import { initializeStorage, refreshStorage } from './storage.js';
-import { initializeMarket, refreshMarket } from './market.js?v=20260906-market';
+import { initializeMarket, refreshMarket } from './market.js?v=20260906-market-v2';
 import { initializeResearch, refreshResearch } from './research.js';
 import { initializeMachines, refreshMachines } from './machines.js';
 
