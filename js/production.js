@@ -9,6 +9,7 @@ let currentCompany = null;
 let productionInterval = null;
 let productionInitialized = false;
 const selectedQuantities = new Map();
+const selectedRecipes = new Map();
 
 // ============================================================
 // INITIALISIERUNG
@@ -427,6 +428,15 @@ function renderProduction({
             );
         });
 
+    container
+        .querySelectorAll('.production-recipe-select')
+        .forEach(select => {
+            selectedRecipes.set(
+                select.dataset.machineId,
+                select.value
+            );
+        });
+
     const jobsByMachine = new Map();
 
     jobs.forEach(job => {
@@ -710,7 +720,10 @@ function renderProductionSelector(
         }
 
         options += `
-            <option value="${escapeHtml(recipe.id)}">
+            <option
+                value="${escapeHtml(recipe.id)}"
+                ${recipe.id === selectedRecipeId ? 'selected' : ''}
+            >
                 ${escapeHtml(product.name)}
                 – ${formatDuration(
                     recipe.production_time_seconds * 1000
@@ -720,6 +733,8 @@ function renderProductionSelector(
     });
 
     const firstRecipe = recipes[0];
+    const selectedRecipeId =
+        selectedRecipes.get(machine.id) || firstRecipe.id;
     const selectedQuantity =
         selectedQuantities.get(machine.id) || 1;
 
@@ -752,11 +767,11 @@ function renderProductionSelector(
 
             <div class="production-material-requirements">
                 ${renderMaterialRequirements(
-                    firstRecipe.id,
+                    selectedRecipeId,
                     recipes,
                     recipeMaterials,
                     ownedMaterials,
-                    1
+                    Number(selectedQuantity) || 1
                 )}
             </div>
 
@@ -921,7 +936,13 @@ function attachProductionEvents(
             );
         };
 
-        select.addEventListener('change', updateRequirements);
+        select.addEventListener('change', () => {
+            selectedRecipes.set(
+                select.dataset.machineId,
+                select.value
+            );
+            updateRequirements();
+        });
         quantityInput?.addEventListener('input', () => {
             selectedQuantities.set(
                 select.dataset.machineId,
