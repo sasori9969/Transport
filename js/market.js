@@ -97,7 +97,8 @@ export async function refreshMarket(company = null) {
                     products (
                         name,
                         unit,
-                        base_price
+                        base_price,
+                        market_base_sale_minutes
                     )
                 `)
                 .eq('company_id', currentCompany.id)
@@ -419,12 +420,12 @@ function renderMarket({
                         <th>Offen</th>
                         <th>Preis / Stück</th>
                         <th>Erlös</th>
-                        <th>Endet</th>
+                        <th>Erwartete Verkaufszeit</th>
                         <th>Aktion</th>
                     </tr>
                 </thead>
                 <tbody>
-                    ${renderListingRows(listings)}
+                    ${renderListingRows(listings, prices)}
                 </tbody>
             </table>
         </section>
@@ -433,14 +434,25 @@ function renderMarket({
     attachMarketEvents(purchasePlan);
 }
 
-function renderListingRows(listings) {
+function renderListingRows(listings, prices) {
     if (!listings.length) {
         return '<tr><td colspan="6">Keine aktiven Angebote.</td></tr>';
     }
 
+    const marketPriceByProduct = new Map(
+        prices.map(item => [item.product_id, Number(item.current_price || 0)])
+    );
+
     return listings.map(listing => {
         const product = listing.products || {};
-        const expiresAt = new Date(listing.expires_at);
+        const marketPrice = marketPriceByProduct.get(listing.product_id)
+            || Number(product.base_price || listing.price_per_unit || 1);
+        const baseMinutes = Number(product.market_base_sale_minutes || 30);
+        const priceRatio = Number(listing.price_per_unit || 0) / Math.max(marketPrice, 0.01);
+        const expectedMinutes = Math.max(
+            baseMinutes * Math.pow(Math.max(priceRatio, 0.05), 2),
+            0.5
+        );
 
         return `
             <tr>
@@ -448,7 +460,7 @@ function renderListingRows(listings) {
                 <td>${formatNumber(listing.remaining_quantity, 2)} ${escapeHtml(product.unit || '')}</td>
                 <td>${formatCurrency(listing.price_per_unit)}</td>
                 <td>${formatCurrency(listing.total_revenue)}</td>
-                <td>${formatDateTime(expiresAt)}</td>
+                <td>${formatSaleTime(expectedMinutes)}</td>
                 <td>
                     <button
                         type="button"
@@ -779,4 +791,12 @@ function formatDateTime(date) {
         dateStyle: 'short',
         timeStyle: 'short'
     }).format(date);
+}
+
+function formatSaleTime(minutes) {
+    if (minutes < 60) {
+        return `ca. ${formatNumber(minutes, 1)} Min.`;
+    }
+
+    return `ca. ${formatNumber(minutes / 60, 1)} Std.`;
 }
