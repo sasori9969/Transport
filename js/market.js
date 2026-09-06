@@ -272,15 +272,9 @@ function renderMarket({
                     >
                 </td>
                 <td>
-                    <select
-                        class="market-duration-input"
-                        data-duration-product-id="${escapeHtml(item.product_id)}"
-                    >
-                        <option value="15">15 Minuten</option>
-                        <option value="60" selected>1 Stunde</option>
-                        <option value="360">6 Stunden</option>
-                        <option value="1440">24 Stunden</option>
-                    </select>
+                    <span class="market-speed-hint">
+                        Geschwindigkeit richtet sich nach dem Preis
+                    </span>
                 </td>
                 <td>
                     <button
@@ -397,7 +391,7 @@ function renderMarket({
         <section class="market-section">
             <h2>Produkte auf den Markt stellen</h2>
             <p class="market-help-text">
-                Günstige Angebote verkaufen sich schneller. Teure Angebote können länger liegen bleiben.
+                Du setzt nur den Preis. Der Markt bestimmt daraus automatisch, wie schnell sich dein Angebot verkauft.
             </p>
             <table class="data-table market-table">
                 <thead>
@@ -406,7 +400,7 @@ function renderMarket({
                         <th>Bestand</th>
                         <th>Menge</th>
                         <th>Preis / Stück</th>
-                        <th>Dauer</th>
+                        <th>Verkaufstempo</th>
                         <th>Aktion</th>
                     </tr>
                 </thead>
@@ -577,12 +571,8 @@ function attachMarketEvents(purchasePlan) {
             const priceInput = document.querySelector(
                 `.market-price-input[data-price-product-id="${productId}"]`
             );
-            const durationInput = document.querySelector(
-                `.market-duration-input[data-duration-product-id="${productId}"]`
-            );
             const quantity = parseQuantity(quantityInput?.value);
             const price = parseQuantity(priceInput?.value);
-            const duration = Number(durationInput?.value || 60);
 
             if (!Number.isFinite(quantity) || quantity <= 0) {
                 showMarketMessage('Bitte eine gültige Menge eingeben.', 'error');
@@ -600,8 +590,7 @@ function attachMarketEvents(purchasePlan) {
                 p_company_id: currentCompany.id,
                 p_product_id: productId,
                 p_quantity: quantity,
-                p_price_per_unit: price,
-                p_duration_minutes: duration
+                p_price_per_unit: price
             });
 
             button.disabled = false;
