@@ -1266,6 +1266,305 @@ img {
 }
 
 /* =========================================================
+   MACHINES
+   ========================================================= */
+
+.machines-summary {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr);
+    gap: 16px;
+    margin-bottom: 28px;
+}
+
+.machines-summary-card {
+    min-width: 0;
+    padding: 18px 20px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-panel);
+}
+
+.machines-summary-title {
+    display: block;
+    color: var(--text-muted);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.machines-summary-value {
+    display: block;
+    margin-top: 6px;
+    color: var(--text-primary);
+    font-size: 24px;
+    font-weight: 800;
+}
+
+.machines-summary-label {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.machines-summary-label span {
+    color: var(--text-muted);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.machines-summary-label strong {
+    color: #e9ae72;
+    font-size: 18px;
+    white-space: nowrap;
+}
+
+.machines-summary-hint {
+    margin: 10px 0 0;
+    color: var(--text-muted);
+    font-size: 12px;
+}
+
+.text-danger {
+    color: #ef8585;
+}
+
+.power-gauge {
+    height: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: #080c10;
+}
+
+.power-gauge-bar {
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #a86b2a, #e9ae72);
+    transition: width 0.3s ease;
+}
+
+.power-gauge-bar.warning {
+    background: linear-gradient(90deg, var(--gold-dark), var(--gold-light));
+}
+
+.power-gauge-bar.full {
+    background: linear-gradient(90deg, var(--red-dark), var(--red));
+}
+
+.machines-section {
+    margin-bottom: 32px;
+}
+
+.machines-section-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.machines-section-header h2 {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: 18px;
+}
+
+.machines-section-header span {
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+.machines-section-header strong {
+    color: var(--gold-light);
+}
+
+.machines-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+}
+
+.machine-card {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    padding: 20px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-panel);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+    transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.machine-card:hover {
+    border-color: var(--border-light);
+}
+
+.machine-card.catalog.is-locked {
+    opacity: 0.72;
+}
+
+.machine-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.machine-card-header h3 {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: 17px;
+    overflow-wrap: anywhere;
+}
+
+.machine-card-type {
+    display: block;
+    margin-top: 2px;
+    color: var(--text-muted);
+    font-size: 12px;
+}
+
+.machine-price {
+    color: var(--gold-light);
+    font-size: 16px;
+    white-space: nowrap;
+}
+
+.machine-card-description {
+    margin: 14px 0 0;
+    color: var(--text-secondary);
+    font-size: 13px;
+}
+
+.machine-condition {
+    margin-top: 16px;
+}
+
+.machine-condition-label {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    color: var(--text-muted);
+    font-size: 12px;
+}
+
+.machine-condition-label strong {
+    color: var(--text-secondary);
+}
+
+.condition-bar {
+    height: 7px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: #080c10;
+}
+
+.condition-bar-fill {
+    height: 100%;
+    border-radius: inherit;
+    transition: width 0.3s ease;
+}
+
+.condition-bar-fill.good {
+    background: linear-gradient(90deg, var(--green-dark), var(--green));
+}
+
+.condition-bar-fill.medium {
+    background: linear-gradient(90deg, var(--gold-dark), var(--gold-light));
+}
+
+.condition-bar-fill.bad {
+    background: linear-gradient(90deg, var(--red-dark), var(--red));
+}
+
+.machine-card-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+    gap: 8px;
+    margin: 16px 0 0;
+}
+
+.machine-stat {
+    min-width: 0;
+    padding: 9px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-small);
+    background: var(--bg-input);
+}
+
+.machine-stat span {
+    color: var(--text-muted);
+    font-size: 11px;
+}
+
+.machine-stat strong {
+    display: block;
+    margin-top: 3px;
+    color: var(--text-primary);
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.machine-card-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: auto;
+    padding-top: 16px;
+}
+
+.machine-card-actions > button {
+    flex: 1 1 140px;
+}
+
+.machine-card-note {
+    color: var(--text-muted);
+    font-size: 12px;
+}
+
+.machine-buy-row {
+    align-items: stretch;
+}
+
+.machine-name-input {
+    flex: 1 1 150px;
+    min-width: 0;
+    min-height: 42px;
+    padding: 9px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-small);
+    background: var(--bg-input);
+    color: var(--text-primary);
+}
+
+.machine-name-input:focus {
+    outline: none;
+    border-color: var(--gold);
+}
+
+.machine-name-input:disabled {
+    opacity: 0.5;
+}
+
+.machine-buy-row > button {
+    flex: 0 0 auto;
+}
+
+.machine-card-blocker {
+    margin: 10px 0 0;
+    color: #e9ae72;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+/* =========================================================
    MESSAGES / LOADING
    ========================================================= */
 
@@ -1416,6 +1715,14 @@ img {
 
     .dashboard-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .machines-summary {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+
+    .machines-summary-card.machines-power {
+        grid-column: 1 / -1;
     }
 
     .game-content {
@@ -1572,12 +1879,17 @@ img {
 
     .production-machines,
     .production-grid,
-    .research-grid {
+    .research-grid,
+    .machines-grid {
         grid-template-columns: 1fr;
     }
 
     .production-machine-stats {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .machines-summary {
+        grid-template-columns: 1fr;
     }
 
     .data-table,
