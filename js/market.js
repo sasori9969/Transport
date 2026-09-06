@@ -283,6 +283,7 @@ function renderMarket({
                         type="button"
                         class="primary-button market-list-button"
                         data-list-product="${escapeHtml(item.product_id)}"
+                        data-available-quantity="${escapeHtml(item.quantity)}"
                     >
                         Angebot einstellen
                     </button>
@@ -588,6 +589,16 @@ function attachMarketEvents(purchasePlan) {
                 return;
             }
 
+            const availableQuantity = Number(button.dataset.availableQuantity || 0);
+
+            if (quantity > availableQuantity) {
+                showMarketMessage(
+                    `Nur ${formatNumber(availableQuantity)} Stück sind aktuell im Lager verfügbar.`,
+                    'error'
+                );
+                return;
+            }
+
             if (!Number.isFinite(price) || price <= 0) {
                 showMarketMessage('Bitte einen gültigen Verkaufspreis eingeben.', 'error');
                 return;
@@ -661,6 +672,10 @@ function translateMarketError(error) {
 
     if (lower.includes('cash') || lower.includes('money')) {
         return 'Nicht genügend Geld vorhanden.';
+    }
+
+    if (lower.includes('not enough product quantity')) {
+        return 'Nicht genügend fertige Produkte im Lager verfügbar.';
     }
 
     if (lower.includes('storage')) {
