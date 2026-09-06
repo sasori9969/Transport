@@ -1189,6 +1189,14 @@ img {
     font-weight: 700;
 }
 
+.market-speed-hint {
+    display: inline-block;
+    max-width: 150px;
+    color: var(--text-muted);
+    font-size: 12px;
+    white-space: normal;
+}
+
 .market-purchase-complete {
     color: var(--green);
     font-weight: 700;

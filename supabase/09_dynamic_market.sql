@@ -61,7 +61,7 @@ CREATE OR REPLACE FUNCTION public.create_market_listing(
     p_product_id uuid,
     p_quantity numeric,
     p_price_per_unit numeric,
-    p_duration_minutes integer DEFAULT 60
+    p_duration_minutes integer DEFAULT 1440
 )
 RETURNS public.market_listings
 LANGUAGE plpgsql
@@ -83,9 +83,9 @@ BEGIN
     END IF;
 
     IF p_duration_minutes IS NULL
-       OR p_duration_minutes < 5
+       OR p_duration_minutes < 60
        OR p_duration_minutes > 10080 THEN
-        RAISE EXCEPTION 'Listing duration must be between 5 minutes and 7 days';
+        RAISE EXCEPTION 'Listing duration must be between 1 hour and 7 days';
     END IF;
 
     SELECT quantity
