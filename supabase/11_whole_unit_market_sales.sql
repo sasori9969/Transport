@@ -142,8 +142,8 @@ BEGIN
         p_quantity,
         round(p_price_per_unit, 2),
         'active',
-        now() + make_interval(mins => v_expected_minutes::double precision),
-        now() + make_interval(mins => v_expected_minutes::double precision)
+        now() + (v_expected_minutes * interval '1 minute'),
+        now() + (v_expected_minutes * interval '1 minute')
     )
     RETURNING * INTO v_listing;
 
