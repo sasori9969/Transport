@@ -24,7 +24,7 @@ BEGIN
     SELECT id
       INTO v_machine_type_id
       FROM public.machine_types
-     WHERE lower(trim(name)) = 'holzbearbeitungsmaschine'
+     WHERE lower(trim(name)) LIKE 'holzbearbeitungsmaschine i%'
      LIMIT 1;
 
     SELECT id
