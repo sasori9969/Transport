@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Empire Tycoon">
-  <rect width="64" height="64" rx="12" fill="#0b0f14"/>
-  <path d="M17 12h31v9H27v8h18v9H27v14H17z" fill="#e0bd4d"/>
-  <path d="M17 12h31v9H27v8h18v9H27v14H17z" fill="none" stroke="#c9a227" stroke-width="2"/>
+  <rect width="64" height="64" rx="14" fill="#0b0f14"/>
+  <rect x="4" y="4" width="56" height="56" rx="12" fill="none" stroke="#c9a227" stroke-width="2" opacity="0.55"/>
+  <path d="M18 14h28v8H28v7h16v8H28v13H18z" fill="#e0bd4d"/>
 </svg>

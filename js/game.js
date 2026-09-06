@@ -29,6 +29,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     showLoading(true);
 
     initializeNavigation();
+    initializePanelTargets();
     initializeLogout();
     window.addEventListener('market-changed', handleMarketChanged);
     window.addEventListener('research-changed', handleResearchChanged);
@@ -626,6 +627,53 @@ function initializeNavigation() {
     });
 }
 
+
+// ============================================================
+// PANEL SHORTCUTS (Overview buttons etc.)
+// ============================================================
+
+function initializePanelTargets() {
+    const targetButtons =
+        document.querySelectorAll(
+            '[data-panel-target]'
+        );
+
+    targetButtons.forEach(button => {
+        button.addEventListener('click', async () => {
+            const target =
+                button.dataset.panelTarget;
+
+            if (!target) {
+                return;
+            }
+
+            const navButton =
+                document.querySelector(
+                    `[data-panel="${target}"]`
+                );
+
+            if (navButton) {
+                navButton.click();
+                return;
+            }
+
+            const panels =
+                document.querySelectorAll('.game-panel');
+
+            panels.forEach(panel => {
+                panel.classList.remove('active');
+            });
+
+            const targetPanel =
+                document.getElementById(`panel-${target}`);
+
+            if (targetPanel) {
+                targetPanel.classList.add('active');
+            }
+        });
+    });
+}
+
 // ============================================================
 // LOGOUT
 // ============================================================
@@ -702,6 +750,7 @@ async function reloadGameData() {
 
     updateUserInterface();
     await updateProductionStatus();
+    await refreshProduction();
     await refreshStorage();
     await refreshMarket();
     await refreshResearch();
