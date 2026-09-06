@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="EMPIRE TYCOON – Dein Unternehmens-Cockpit."
+    >
+
+    <title>EMPIRE TYCOON – Cockpit</title>
+
+    <link
+        rel="icon"
+        type="image/svg+xml"
+        href="assets/favicon.svg"
+    >
+
+   <link rel="stylesheet" href="./css/game.css">
+
+</head>
+
+<body>
+
+    <!-- ======================================================
+         APP
+         ====================================================== -->
+
+    <div id="game-app" class="game-app">
+
+
+        <!-- ==================================================
+             TOP BAR
+             ================================================== -->
+
+        <header class="topbar">
+
+            <div class="topbar-brand">
+
+                <div class="brand-icon">
+                    E
+                </div>
+
+                <div class="brand-name">
+                    EMPIRE TYCOON
+                </div>
+
+            </div>
+
+
+            <div class="topbar-company">
+
+                <span class="company-label">
+                    Unternehmen
+                </span>
+
+                <strong id="company-name">
+                    Wird geladen...
+                </strong>
+
+            </div>
+
+
+            <div class="topbar-user">
+
+                <span id="username-display">
+                    Spieler
+                </span>
+
+                <button
+                    type="button"
+                    id="logout-button"
+                    class="logout-button"
+                >
+                    Logout
+                </button>
+
+            </div>
+
+        </header>
+
+
+        <!-- ==================================================
+             STATUS BAR
+             ================================================== -->
+
+        <section class="status-bar">
+
+            <div class="status-item">
+
+                <span class="status-icon money">
+                    €
+                </span>
+
+                <div class="status-content">
+
+                    <span class="status-label">
+                        Geld
+                    </span>
+
+                    <strong id="cash-value">
+                        €0,00
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="status-item">
+
+                <span class="status-icon material">
+                    ◈
+                </span>
+
+                <div class="status-content">
+
+                    <span class="status-label">
+                        Materialien
+                    </span>
+
+                    <strong id="materials-value">
+                        0
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="status-item">
+
+                <span class="status-icon storage">
+                    ▣
+                </span>
+
+                <div class="status-content">
+
+                    <span class="status-label">
+                        Lager
+                    </span>
+
+                    <strong id="storage-value">
+                        0 / 100
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="status-item">
+
+                <span class="status-icon power">
+                    ⚡
+                </span>
+
+                <div class="status-content">
+
+                    <span class="status-label">
+                        Strom
+                    </span>
+
+                    <strong id="power-value">
+                        0 / 5
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="status-item">
+
+                <span class="status-icon profit">
+                    ↗
+                </span>
+
+                <div class="status-content">
+
+                    <span class="status-label">
+                        Gewinn / Stunde
+                    </span>
+
+                    <strong id="profit-hour-value">
+                        €0,00
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ==================================================
+             MAIN LAYOUT
+             ================================================== -->
+
+        <div class="game-layout">
+
+
+            <!-- ==============================================
+                 SIDEBAR
+                 ============================================== -->
+
+            <aside class="sidebar">
+
+                <nav class="main-navigation">
+
+                    <button
+                        type="button"
+                        class="nav-button active"
+                        data-panel="overview"
+                    >
+                        <span class="nav-icon">
+                            ◉
+                        </span>
+
+                        <span>
+                            Übersicht
+                        </span>
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="nav-button"
+                        data-panel="production"
+                    >
+                        <span class="nav-icon">
+                            ⚙
+                        </span>
+
+                        <span>
+                            Produktion
+                        </span>
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="nav-button"
+                        data-panel="storage"
+                    >
+                        <span class="nav-icon">
+                            ▣
+                        </span>
+
+                        <span>
+                            Lager
+                        </span>
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="nav-button"
+                        data-panel="market"
+                    >
+                        <span class="nav-icon">
+                            €
+                        </span>
+
+                        <span>
+                            Markt
+                        </span>
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="nav-button"
+                        data-panel="research"
+                    >
+                        <span class="nav-icon">
+                            ◆
+                        </span>
+
+                        <span>
+                            Forschung
+                        </span>
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="nav-button"
+                        data-panel="machines"
+                    >
+                        <span class="nav-icon">
+                            ⚙
+                        </span>
+
+                        <span>
+                            Maschinen
+                        </span>
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="nav-button"
+                        data-panel="employees"
+                    >
+                        <span class="nav-icon">
+                            ●
+                        </span>
+
+                        <span>
+                            Mitarbeiter
+                        </span>
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="nav-button"
+                        data-panel="contracts"
+                    >
+                        <span class="nav-icon">
+                            ◫
+                        </span>
+
+                        <span>
+                            Aufträge
+                        </span>
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="nav-button"
+                        data-panel="finance"
+                    >
+                        <span class="nav-icon">
+                            $
+                        </span>
+
+                        <span>
+                            Finanzen
+                        </span>
+                    </button>
+
+                </nav>
+
+
+                <div class="sidebar-footer">
+
+                    <div class="location-display">
+
+                        <span class="location-label">
+                            Standort
+                        </span>
+
+                        <strong id="location-name">
+                            Eltern-Keller
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </aside>
+
+
+            <!-- ==============================================
+                 CONTENT
+                 ============================================== -->
+
+            <main class="game-content">
+
+
+                <!-- ==========================================
+                     OVERVIEW
+                     ========================================== -->
+
+                <section
+                    id="panel-overview"
+                    class="game-panel active"
+                >
+
+                    <div class="panel-header">
+
+                        <div>
+
+                            <span class="panel-kicker">
+                                UNTERNEHMENSZENTRALE
+                            </span>
+
+                            <h1>
+                                Übersicht
+                            </h1>
+
+                            <p>
+                                Baue dein Unternehmen Schritt für Schritt auf.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="welcome-card">
+
+                        <div class="welcome-content">
+
+                            <span class="welcome-label">
+                                DEIN IMPERIUM BEGINNT HIER
+                            </span>
+
+                            <h2>
+                                Vom Keller zum Milliardenimperium.
+                            </h2>
+
+                            <p>
+                                Du startest mit nichts außer einer
+                                kostenlosen Werkbank. Kaufe Rohstoffe,
+                                produziere Waren und verkaufe sie auf
+                                dem Markt.
+                            </p>
+
+                            <button
+                                type="button"
+                                class="primary-action"
+                                data-panel-target="production"
+                            >
+                                Produktion starten
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="dashboard-grid">
+
+
+                        <article class="dashboard-card">
+
+                            <div class="card-header">
+
+                                <h3>
+                                    Aktueller Standort
+                                </h3>
+
+                            </div>
+
+                            <div class="card-main-value">
+                                <span id="overview-location">
+                                    Eltern-Keller
+                                </span>
+                            </div>
+
+                            <p class="card-description">
+                                Dein erster Unternehmensstandort.
+                            </p>
+
+                        </article>
+
+
+                        <article class="dashboard-card">
+
+                            <div class="card-header">
+
+                                <h3>
+                                    Produktion
+                                </h3>
+
+                            </div>
+
+                            <div class="card-main-value">
+                                <span id="overview-production">
+                                    0
+                                </span>
+                            </div>
+
+                            <p class="card-description">
+                                Aktive Produktionsaufträge.
+                            </p>
+
+                        </article>
+
+
+                        <article class="dashboard-card">
+
+                            <div class="card-header">
+
+                                <h3>
+                                    Reputation
+                                </h3>
+
+                            </div>
+
+                            <div class="card-main-value">
+                                <span id="overview-reputation">
+                                    0
+                                </span>
+                            </div>
+
+                            <p class="card-description">
+                                Dein aktueller Ruf am Markt.
+                            </p>
+
+                        </article>
+
+
+                        <article class="dashboard-card">
+
+                            <div class="card-header">
+
+                                <h3>
+                                    Marktanteil
+                                </h3>
+
+                            </div>
+
+                            <div class="card-main-value">
+                                <span id="overview-market-share">
+                                    0 %
+                                </span>
+                            </div>
+
+                            <p class="card-description">
+                                Dein Anteil am Markt.
+                            </p>
+
+                        </article>
+
+                    </div>
+
+
+                    <div class="progress-card">
+
+                        <div class="card-header">
+
+                            <div>
+
+                                <h3>
+                                    Unternehmensentwicklung
+                                </h3>
+
+                                <p>
+                                    Dein Weg zum ersten Milliardenunternehmen.
+                                </p>
+
+                            </div>
+
+                            <strong id="progress-value">
+                                0 %
+                            </strong>
+
+                        </div>
+
+                        <div class="progress-bar">
+
+                            <div
+                                id="empire-progress"
+                                class="progress-fill"
+                                style="width: 0%;"
+                            ></div>
+
+                        </div>
+
+                        <div class="progress-labels">
+
+                            <span>
+                                Keller
+                            </span>
+
+                            <span>
+                                Garage
+                            </span>
+
+                            <span>
+                                Werkstatt
+                            </span>
+
+                            <span>
+                                Fabrik
+                            </span>
+
+                            <span>
+                                Milliardenimperium
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- ==========================================
+                     PRODUCTION
+                     ========================================== -->
+
+                <section
+                    id="panel-production"
+                    class="game-panel"
+                >
+
+                    <div class="panel-header">
+
+                        <div>
+
+                            <span class="panel-kicker">
+                                PRODUKTION
+                            </span>
+
+                            <h1>
+                                Produktion
+                            </h1>
+
+                            <p>
+                                Stelle Waren her und baue deine Produktion aus.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div id="production-content">
+
+                        <div class="empty-state">
+
+                            <div class="empty-icon">
+                                ⚙
+                            </div>
+
+                            <h3>
+                                Produktion wird geladen
+                            </h3>
+
+                            <p>
+                                Produktionsdaten werden mit Supabase verbunden.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- ==========================================
+                     STORAGE
+                     ========================================== -->
+
+                <section
+                    id="panel-storage"
+                    class="game-panel"
+                >
+
+                    <div class="panel-header">
+
+                        <div>
+
+                            <span class="panel-kicker">
+                                INVENTAR
+                            </span>
+
+                            <h1>
+                                Lager
+                            </h1>
+
+                            <p>
+                                Hier werden deine fertigen Waren gespeichert.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div id="storage-content">
+
+                        <div class="empty-state">
+
+                            <div class="empty-icon">
+                                ▣
+                            </div>
+
+                            <h3>
+                                Lager wird geladen
+                            </h3>
+
+                            <p>
+                                Deine Lagerbestände werden abgerufen.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- ==========================================
+                     MARKET
+                     ========================================== -->
+
+                <section
+                    id="panel-market"
+                    class="game-panel"
+                >
+
+                    <div class="panel-header">
+
+                        <div>
+
+                            <span class="panel-kicker">
+                                MARKT
+                            </span>
+
+                            <h1>
+                                Markt
+                            </h1>
+
+                            <p>
+                                Kaufe Materialien und verkaufe deine Produkte.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div id="market-content">
+
+                        <div class="empty-state">
+
+                            <div class="empty-icon">
+                                €
+                            </div>
+
+                            <h3>
+                                Markt wird geladen
+                            </h3>
+
+                            <p>
+                                Aktuelle Preise werden abgerufen.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- ==========================================
+                     RESEARCH
+                     ========================================== -->
+
+                <section
+                    id="panel-research"
+                    class="game-panel"
+                >
+
+                    <div class="panel-header">
+
+                        <div>
+
+                            <span class="panel-kicker">
+                                ENTWICKLUNG
+                            </span>
+
+                            <h1>
+                                Forschung
+                            </h1>
+
+                            <p>
+                                Entwickle neue Technologien und verbessere dein Unternehmen.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div id="research-content">
+
+                        <div class="empty-state">
+
+                            <div class="empty-icon">
+                                ◆
+                            </div>
+
+                            <h3>
+                                Forschung wird geladen
+                            </h3>
+
+                            <p>
+                                Verfügbare Technologien werden abgerufen.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- ==========================================
+                     MACHINES
+                     ========================================== -->
+
+                <section
+                    id="panel-machines"
+                    class="game-panel"
+                >
+
+                    <div class="panel-header">
+
+                        <div>
+
+                            <span class="panel-kicker">
+                                ANLAGEN
+                            </span>
+
+                            <h1>
+                                Maschinen
+                            </h1>
+
+                            <p>
+                                Kaufe und verbessere deine Produktionsanlagen.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div id="machines-content">
+
+                        <div class="empty-state">
+
+                            <div class="empty-icon">
+                                ⚙
+                            </div>
+
+                            <h3>
+                                Maschinen werden geladen
+                            </h3>
+
+                            <p>
+                                Deine Produktionsanlagen werden abgerufen.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- ==========================================
+                     EMPLOYEES
+                     ========================================== -->
+
+                <section
+                    id="panel-employees"
+                    class="game-panel"
+                >
+
+                    <div class="panel-header">
+
+                        <div>
+
+                            <span class="panel-kicker">
+                                PERSONAL
+                            </span>
+
+                            <h1>
+                                Mitarbeiter
+                            </h1>
+
+                            <p>
+                                Stelle Mitarbeiter ein und entwickle dein Team.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div id="employees-content">
+
+                        <div class="empty-state">
+
+                            <div class="empty-icon">
+                                ●
+                            </div>
+
+                            <h3>
+                                Mitarbeiter werden geladen
+                            </h3>
+
+                            <p>
+                                Der Bewerbermarkt wird später freigeschaltet.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- ==========================================
+                     CONTRACTS
+                     ========================================== -->
+
+                <section
+                    id="panel-contracts"
+                    class="game-panel"
+                >
+
+                    <div class="panel-header">
+
+                        <div>
+
+                            <span class="panel-kicker">
+                                GESCHÄFT
+                            </span>
+
+                            <h1>
+                                Aufträge
+                            </h1>
+
+                            <p>
+                                Erfülle Aufträge und steigere deine Reputation.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div id="contracts-content">
+
+                        <div class="empty-state">
+
+                            <div class="empty-icon">
+                                ◫
+                            </div>
+
+                            <h3>
+                                Aufträge werden geladen
+                            </h3>
+
+                            <p>
+                                Verträge und Kundenaufträge werden später verfügbar.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- ==========================================
+                     FINANCE
+                     ========================================== -->
+
+                <section
+                    id="panel-finance"
+                    class="game-panel"
+                >
+
+                    <div class="panel-header">
+
+                        <div>
+
+                            <span class="panel-kicker">
+                                FINANZEN
+                            </span>
+
+                            <h1>
+                                Finanzen
+                            </h1>
+
+                            <p>
+                                Verwalte dein Kapital, Kredite und deine Unternehmensentwicklung.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div id="finance-content">
+
+                        <div class="empty-state">
+
+                            <div class="empty-icon">
+                                $
+                            </div>
+
+                            <h3>
+                                Finanzen werden geladen
+                            </h3>
+
+                            <p>
+                                Finanzdaten werden später hier angezeigt.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+            </main>
+
+        </div>
+
+
+        <!-- ==================================================
+             GLOBAL MESSAGE
+             ================================================== -->
+
+        <div
+            id="game-message"
+            class="game-message"
+            role="alert"
+            aria-live="polite"
+        ></div>
+
+
+        <!-- ==================================================
+             LOADING OVERLAY
+             ================================================== -->
+
+        <div
+            id="game-loading"
+            class="game-loading"
+        >
+
+            <div class="loading-box">
+
+                <div class="loading-spinner"></div>
+
+                <p>
+                    Imperium wird geladen...
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ======================================================
+         JAVASCRIPT
+         ====================================================== -->
+
+    <script
+        type="module"
+        src="js/game.js"
+    ></script>
+
+</body>
+</html>

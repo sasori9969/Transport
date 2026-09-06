@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="EMPIRE TYCOON – Vom Keller zum Milliardenimperium."
+    >
+
+    <title>EMPIRE TYCOON</title>
+
+    <link
+        rel="icon"
+        type="image/svg+xml"
+        href="assets/favicon.svg"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/main.css"
+    >
+</head>
+
+<body>
+
+    <main class="landing-page">
+
+        <section class="hero">
+
+            <div class="hero-logo">
+                <div class="hero-logo-icon">
+                    E
+                </div>
+
+                <div class="hero-logo-text">
+                    <h1>EMPIRE TYCOON</h1>
+
+                    <p>
+                        VOM KELLER ZUM MILLIARDENIMPERIUM
+                    </p>
+                </div>
+            </div>
+
+
+            <div class="hero-content">
+
+                <span class="hero-label">
+                    DEIN IMPERIUM. DEINE ENTSCHEIDUNGEN.
+                </span>
+
+                <h2>
+                    Starte bei <strong>€0</strong>.<br>
+                    Baue ein Imperium auf.
+                </h2>
+
+                <p class="hero-description">
+                    Beginne mit einer kostenlosen Werkbank im Keller
+                    deiner Eltern. Produziere, verkaufe, forsche,
+                    investiere und entwickle dein Unternehmen vom
+                    kleinen Handwerksbetrieb zum globalen Konzern.
+                </p>
+
+
+                <div class="hero-actions">
+
+                    <a
+                        href="login.html"
+                        class="primary-button"
+                    >
+                        Imperium starten
+                    </a>
+
+                    <a
+                        href="login.html"
+                        class="secondary-button"
+                    >
+                        Einloggen
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <div class="game-features">
+
+                <div class="feature-card">
+
+                    <div class="feature-icon">
+                        €
+                    </div>
+
+                    <h3>
+                        Verdiene Geld
+                    </h3>
+
+                    <p>
+                        Produziere Waren und verkaufe sie
+                        auf dem dynamischen Markt.
+                    </p>
+
+                </div>
+
+
+                <div class="feature-card">
+
+                    <div class="feature-icon">
+                        ⚙
+                    </div>
+
+                    <h3>
+                        Automatisiere
+                    </h3>
+
+                    <p>
+                        Kaufe Maschinen, stelle Mitarbeiter ein
+                        und automatisiere deine Produktion.
+                    </p>
+
+                </div>
+
+
+                <div class="feature-card">
+
+                    <div class="feature-icon">
+                        ↑
+                    </div>
+
+                    <h3>
+                        Werde größer
+                    </h3>
+
+                    <p>
+                        Entwickle dich vom Keller über die
+                        Fabrik bis zum Industriepark.
+                    </p>
+
+                </div>
+
+
+                <div class="feature-card">
+
+                    <div class="feature-icon">
+                        ★
+                    </div>
+
+                    <h3>
+                        Baue dein Imperium
+                    </h3>
+
+                    <p>
+                        Forschung, Unternehmen, Immobilien,
+                        Kredite und globale Expansion.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <footer class="landing-footer">
+
+                <p>
+                    EMPIRE TYCOON
+                </p>
+
+                <span>
+                    Ein Browser-Tycoon-Spiel
+                </span>
+
+            </footer>
+
+        </section>
+
+    </main>
+
+
+    <script type="module">
+
+        import {
+            checkAuth
+        } from './js/auth.js';
+
+
+        async function initializeLandingPage() {
+
+            try {
+
+                const auth =
+                    await checkAuth();
+
+                if (auth.authenticated) {
+
+                    const currentPath =
+                        window.location.pathname;
+
+                    if (
+                        !currentPath.endsWith(
+                            '/game.html'
+                        )
+                    ) {
+                        window.location.href =
+                            'game.html';
+                    }
+
+                }
+
+            } catch (error) {
+
+                console.error(
+                    'Fehler beim Prüfen der Session:',
+                    error
+                );
+
+            }
+
+        }
+
+
+        initializeLandingPage();
+
+    </script>
+
+</body>
+</html>

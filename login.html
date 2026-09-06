@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>EMPIRE TYCOON – Login</title>
+
+    <link
+        rel="stylesheet"
+        href="css/auth.css"
+    >
+</head>
+
+<body>
+
+    <main class="auth-page">
+
+        <section class="auth-card">
+
+            <div class="auth-logo">
+                <div class="logo-icon">E</div>
+
+                <h1>EMPIRE TYCOON</h1>
+
+                <p>
+                    Vom Keller zum Milliardenimperium
+                </p>
+            </div>
+
+
+            <!-- ==================================================
+                 LOGIN
+                 ================================================== -->
+
+            <div
+                id="login-section"
+                class="auth-section active"
+            >
+
+                <h2>Willkommen zurück</h2>
+
+                <p class="auth-description">
+                    Logge dich ein und führe dein Unternehmen weiter.
+                </p>
+
+                <form id="login-form">
+
+                    <div class="form-group">
+
+                        <label for="login-email">
+                            E-Mail-Adresse
+                        </label>
+
+                        <input
+                            type="email"
+                            id="login-email"
+                            name="email"
+                            placeholder="deine@email.de"
+                            autocomplete="email"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="login-password">
+                            Passwort
+                        </label>
+
+                        <input
+                            type="password"
+                            id="login-password"
+                            name="password"
+                            placeholder="Passwort"
+                            autocomplete="current-password"
+                            required
+                        >
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="auth-button"
+                        id="login-button"
+                    >
+                        Einloggen
+                    </button>
+
+                </form>
+
+
+                <button
+                    type="button"
+                    class="link-button"
+                    id="show-register-button"
+                >
+                    Noch kein Konto? Jetzt registrieren
+                </button>
+
+
+                <button
+                    type="button"
+                    class="link-button secondary"
+                    id="show-reset-button"
+                >
+                    Passwort vergessen?
+                </button>
+
+            </div>
+
+
+            <!-- ==================================================
+                 REGISTRIERUNG
+                 ================================================== -->
+
+            <div
+                id="register-section"
+                class="auth-section"
+            >
+
+                <h2>Neues Imperium starten</h2>
+
+                <p class="auth-description">
+                    Erstelle deinen Spieleraccount und starte bei €0.
+                </p>
+
+                <form id="register-form">
+
+                    <div class="form-group">
+
+                        <label for="register-username">
+                            Benutzername
+                        </label>
+
+                        <input
+                            type="text"
+                            id="register-username"
+                            name="username"
+                            placeholder="Dein Benutzername"
+                            minlength="3"
+                            maxlength="30"
+                            autocomplete="username"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="register-email">
+                            E-Mail-Adresse
+                        </label>
+
+                        <input
+                            type="email"
+                            id="register-email"
+                            name="email"
+                            placeholder="deine@email.de"
+                            autocomplete="email"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="register-password">
+                            Passwort
+                        </label>
+
+                        <input
+                            type="password"
+                            id="register-password"
+                            name="password"
+                            placeholder="Mindestens 6 Zeichen"
+                            minlength="6"
+                            autocomplete="new-password"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="register-password-confirm">
+                            Passwort wiederholen
+                        </label>
+
+                        <input
+                            type="password"
+                            id="register-password-confirm"
+                            name="password_confirm"
+                            placeholder="Passwort wiederholen"
+                            minlength="6"
+                            autocomplete="new-password"
+                            required
+                        >
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="auth-button"
+                        id="register-button"
+                    >
+                        Imperium gründen
+                    </button>
+
+                </form>
+
+
+                <button
+                    type="button"
+                    class="link-button"
+                    id="show-login-button"
+                >
+                    Bereits registriert? Einloggen
+                </button>
+
+            </div>
+
+
+            <!-- ==================================================
+                 PASSWORT VERGESSEN
+                 ================================================== -->
+
+            <div
+                id="reset-section"
+                class="auth-section"
+            >
+
+                <h2>Passwort zurücksetzen</h2>
+
+                <p class="auth-description">
+                    Wir senden dir einen Link zum Zurücksetzen deines Passworts.
+                </p>
+
+                <form id="reset-form">
+
+                    <div class="form-group">
+
+                        <label for="reset-email">
+                            E-Mail-Adresse
+                        </label>
+
+                        <input
+                            type="email"
+                            id="reset-email"
+                            name="email"
+                            placeholder="deine@email.de"
+                            autocomplete="email"
+                            required
+                        >
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="auth-button"
+                        id="reset-button"
+                    >
+                        Reset-Link senden
+                    </button>
+
+                </form>
+
+
+                <button
+                    type="button"
+                    class="link-button"
+                    id="reset-back-button"
+                >
+                    Zurück zum Login
+                </button>
+
+            </div>
+
+
+            <!-- ==================================================
+                 MELDUNGEN
+                 ================================================== -->
+
+            <div
+                id="auth-message"
+                class="auth-message"
+                role="alert"
+                aria-live="polite"
+            ></div>
+
+
+            <div
+                id="auth-loading"
+                class="auth-loading"
+                aria-hidden="true"
+            >
+                Bitte warten...
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- ========================================================
+         JAVASCRIPT
+         ======================================================== -->
+
+    <script
+        type="module"
+        src="js/login.js"
+    ></script>
+
+</body>
+</html>
