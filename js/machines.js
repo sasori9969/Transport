@@ -96,7 +96,6 @@ export async function refreshMachines(company = null, location = null) {
             .select(`
                 id,
                 name,
-                description,
                 purchase_price,
                 power_usage,
                 base_speed,
