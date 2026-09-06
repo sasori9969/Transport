@@ -708,6 +708,23 @@ function renderProductionSelector(
         `;
     }
 
+    const firstRecipe = recipes[0];
+    const storedRecipeId = selectedRecipes.get(machine.id);
+    const selectedRecipeId = recipes.some(
+        recipe => recipe.id === storedRecipeId
+    )
+        ? storedRecipeId
+        : firstRecipe.id;
+    const selectedQuantity =
+        selectedQuantities.get(machine.id) || 1;
+    const canStart = canProduceRecipe(
+        selectedRecipeId,
+        selectedQuantity,
+        recipes,
+        recipeMaterials,
+        ownedMaterials
+    );
+
     let options = '';
 
     recipes.forEach(recipe => {
@@ -731,19 +748,6 @@ function renderProductionSelector(
             </option>
         `;
     });
-
-    const firstRecipe = recipes[0];
-    const selectedRecipeId =
-        selectedRecipes.get(machine.id) || firstRecipe.id;
-    const selectedQuantity =
-        selectedQuantities.get(machine.id) || 1;
-    const canStart = canProduceRecipe(
-        selectedRecipeId,
-        selectedQuantity,
-        recipes,
-        recipeMaterials,
-        ownedMaterials
-    );
 
     return `
         <div class="production-form">
