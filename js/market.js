@@ -3,10 +3,27 @@ import { supabase } from './supabase.js';
 let currentCompany = null;
 let marketFeedback = null;
 let plannedProductionQuantity = 1;
+let marketProcessInterval = null;
 
 export async function initializeMarket(company = null) {
     currentCompany = company;
     await refreshMarket();
+
+    if (marketProcessInterval) {
+        clearInterval(marketProcessInterval);
+    }
+
+    marketProcessInterval = setInterval(async () => {
+        const { error } = await supabase.rpc('process_market_listings');
+
+        if (error) {
+            console.error('Fehler bei der Marktverarbeitung:', error);
+            return;
+        }
+
+        await refreshMarket();
+        window.dispatchEvent(new CustomEvent('market-changed'));
+    }, 30000);
 }
 
 export async function refreshMarket(company = null) {
@@ -29,6 +46,7 @@ export async function refreshMarket(company = null) {
         pricesResult,
         materialsResult,
         storageResult,
+        listingsResult,
         recipesResult,
         recipeMaterialsResult,
         ownedMaterialsResult,
@@ -60,11 +78,31 @@ export async function refreshMarket(company = null) {
                     quantity,
                     products (
                         name,
-                        unit
+                        unit,
+                        base_price
                     )
                 `)
                 .eq('company_id', currentCompany.id)
                 .order('quantity', { ascending: false }),
+            supabase
+                .from('market_listings')
+                .select(`
+                    id,
+                    product_id,
+                    remaining_quantity,
+                    price_per_unit,
+                    status,
+                    expires_at,
+                    total_revenue,
+                    products (
+                        name,
+                        unit,
+                        base_price
+                    )
+                `)
+                .eq('company_id', currentCompany.id)
+                .eq('status', 'active')
+                .order('created_at', { ascending: true }),
             supabase
                 .from('recipes')
                 .select(`
@@ -103,6 +141,7 @@ export async function refreshMarket(company = null) {
         pricesResult.error ||
         materialsResult.error ||
         storageResult.error ||
+        listingsResult.error ||
         recipesResult.error ||
         recipeMaterialsResult.error ||
         ownedMaterialsResult.error ||
@@ -113,6 +152,7 @@ export async function refreshMarket(company = null) {
             pricesResult.error ||
             materialsResult.error ||
             storageResult.error ||
+            listingsResult.error ||
             recipesResult.error ||
             recipeMaterialsResult.error ||
             ownedMaterialsResult.error ||
@@ -126,6 +166,7 @@ export async function refreshMarket(company = null) {
         prices: pricesResult.data || [],
         materials: materialsResult.data || [],
         storage: storageResult.data || [],
+        listings: listingsResult.data || [],
         ownedMaterials: ownedMaterialsResult.data || [],
         purchasePlan: buildPurchasePlan(
             recipesResult.data || [],
@@ -142,6 +183,7 @@ function renderMarket({
     prices,
     materials,
     storage,
+    listings,
     ownedMaterials,
     purchasePlan
 }) {
@@ -220,12 +262,33 @@ function renderMarket({
                     >
                 </td>
                 <td>
+                    <input
+                        type="number"
+                        min="0.01"
+                        step="0.01"
+                        value="${escapeHtml(product.base_price || 1)}"
+                        class="market-price-input"
+                        data-price-product-id="${escapeHtml(item.product_id)}"
+                    >
+                </td>
+                <td>
+                    <select
+                        class="market-duration-input"
+                        data-duration-product-id="${escapeHtml(item.product_id)}"
+                    >
+                        <option value="15">15 Minuten</option>
+                        <option value="60" selected>1 Stunde</option>
+                        <option value="360">6 Stunden</option>
+                        <option value="1440">24 Stunden</option>
+                    </select>
+                </td>
+                <td>
                     <button
                         type="button"
-                        class="primary-button market-sell-button"
-                        data-sell-product="${escapeHtml(item.product_id)}"
+                        class="primary-button market-list-button"
+                        data-list-product="${escapeHtml(item.product_id)}"
                     >
-                        Verkaufen
+                        Angebot einstellen
                     </button>
                 </td>
             </tr>
@@ -332,24 +395,78 @@ function renderMarket({
         </section>
 
         <section class="market-section">
-            <h2>Produkte verkaufen</h2>
+            <h2>Produkte auf den Markt stellen</h2>
+            <p class="market-help-text">
+                Günstige Angebote verkaufen sich schneller. Teure Angebote können länger liegen bleiben.
+            </p>
             <table class="data-table market-table">
                 <thead>
                     <tr>
                         <th>Produkt</th>
                         <th>Bestand</th>
                         <th>Menge</th>
+                        <th>Preis / Stück</th>
+                        <th>Dauer</th>
                         <th>Aktion</th>
                     </tr>
                 </thead>
                 <tbody>
-                    ${storageRows || '<tr><td colspan="4">Noch keine fertigen Produkte im Lager.</td></tr>'}
+                    ${storageRows || '<tr><td colspan="6">Noch keine fertigen Produkte im Lager.</td></tr>'}
+                </tbody>
+            </table>
+        </section>
+
+        <section class="market-section">
+            <h2>Meine aktiven Angebote</h2>
+            <table class="data-table market-table">
+                <thead>
+                    <tr>
+                        <th>Produkt</th>
+                        <th>Offen</th>
+                        <th>Preis / Stück</th>
+                        <th>Erlös</th>
+                        <th>Endet</th>
+                        <th>Aktion</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${renderListingRows(listings)}
                 </tbody>
             </table>
         </section>
     `;
 
     attachMarketEvents(purchasePlan);
+}
+
+function renderListingRows(listings) {
+    if (!listings.length) {
+        return '<tr><td colspan="6">Keine aktiven Angebote.</td></tr>';
+    }
+
+    return listings.map(listing => {
+        const product = listing.products || {};
+        const expiresAt = new Date(listing.expires_at);
+
+        return `
+            <tr>
+                <td>${escapeHtml(product.name || 'Produkt')}</td>
+                <td>${formatNumber(listing.remaining_quantity, 2)} ${escapeHtml(product.unit || '')}</td>
+                <td>${formatCurrency(listing.price_per_unit)}</td>
+                <td>${formatCurrency(listing.total_revenue)}</td>
+                <td>${formatDateTime(expiresAt)}</td>
+                <td>
+                    <button
+                        type="button"
+                        class="secondary-button market-cancel-button"
+                        data-cancel-listing="${escapeHtml(listing.id)}"
+                    >
+                        Zurücknehmen
+                    </button>
+                </td>
+            </tr>
+        `;
+    }).join('');
 }
 
 function attachMarketEvents(purchasePlan) {
@@ -451,37 +568,76 @@ function attachMarketEvents(purchasePlan) {
         });
     });
 
-    document.querySelectorAll('[data-sell-product]').forEach(button => {
+    document.querySelectorAll('[data-list-product]').forEach(button => {
         button.addEventListener('click', async () => {
-            const productId = button.dataset.sellProduct;
-            const input = document.querySelector(
+            const productId = button.dataset.listProduct;
+            const quantityInput = document.querySelector(
                 `.market-quantity-input[data-product-id="${productId}"]`
             );
-            const quantity = Number(input?.value);
+            const priceInput = document.querySelector(
+                `.market-price-input[data-price-product-id="${productId}"]`
+            );
+            const durationInput = document.querySelector(
+                `.market-duration-input[data-duration-product-id="${productId}"]`
+            );
+            const quantity = parseQuantity(quantityInput?.value);
+            const price = parseQuantity(priceInput?.value);
+            const duration = Number(durationInput?.value || 60);
 
-            if (!Number.isInteger(quantity) || quantity < 1) {
+            if (!Number.isFinite(quantity) || quantity <= 0) {
                 showMarketMessage('Bitte eine gültige Menge eingeben.', 'error');
+                return;
+            }
+
+            if (!Number.isFinite(price) || price <= 0) {
+                showMarketMessage('Bitte einen gültigen Verkaufspreis eingeben.', 'error');
                 return;
             }
 
             button.disabled = true;
 
-            const { error } = await supabase.rpc('sell_product', {
+            const { error } = await supabase.rpc('create_market_listing', {
                 p_company_id: currentCompany.id,
                 p_product_id: productId,
                 p_quantity: quantity,
-                p_sale_type: 'market'
+                p_price_per_unit: price,
+                p_duration_minutes: duration
             });
 
             button.disabled = false;
 
             if (error) {
-                console.error('Fehler beim Produktverkauf:', error);
+                console.error('Fehler beim Erstellen des Marktangebots:', error);
                 showMarketMessage(translateMarketError(error), 'error');
                 return;
             }
 
-            showMarketMessage('Produkt erfolgreich verkauft.', 'success');
+            showMarketMessage(
+                'Angebot eingestellt. Der Markt verkauft deine Waren nach und nach.',
+                'success'
+            );
+            window.dispatchEvent(new CustomEvent('market-changed'));
+            await refreshMarket();
+        });
+    });
+
+    document.querySelectorAll('[data-cancel-listing]').forEach(button => {
+        button.addEventListener('click', async () => {
+            button.disabled = true;
+
+            const { error } = await supabase.rpc('cancel_market_listing', {
+                p_listing_id: button.dataset.cancelListing
+            });
+
+            button.disabled = false;
+
+            if (error) {
+                console.error('Fehler beim Zurücknehmen des Marktangebots:', error);
+                showMarketMessage(translateMarketError(error), 'error');
+                return;
+            }
+
+            showMarketMessage('Das Angebot wurde zurückgenommen. Restliche Waren liegen wieder im Lager.', 'success');
             window.dispatchEvent(new CustomEvent('market-changed'));
             await refreshMarket();
         });
