@@ -93,6 +93,7 @@ export async function refreshMarket(company = null) {
                     price_per_unit,
                     status,
                     expires_at,
+                    finalizes_at,
                     total_revenue,
                     products (
                         name,
@@ -420,12 +421,12 @@ function renderMarket({
                         <th>Offen</th>
                         <th>Preis / Stück</th>
                         <th>Erlös</th>
-                        <th>Erwartete Verkaufszeit</th>
+                        <th>Verkaufs-Countdown</th>
                         <th>Aktion</th>
                     </tr>
                 </thead>
                 <tbody>
-                    ${renderListingRows(listings, prices)}
+                    ${renderListingRows(listings)}
                 </tbody>
             </table>
         </section>
@@ -434,25 +435,14 @@ function renderMarket({
     attachMarketEvents(purchasePlan);
 }
 
-function renderListingRows(listings, prices) {
+function renderListingRows(listings) {
     if (!listings.length) {
         return '<tr><td colspan="6">Keine aktiven Angebote.</td></tr>';
     }
 
-    const marketPriceByProduct = new Map(
-        prices.map(item => [item.product_id, Number(item.current_price || 0)])
-    );
-
     return listings.map(listing => {
         const product = listing.products || {};
-        const marketPrice = marketPriceByProduct.get(listing.product_id)
-            || Number(product.base_price || listing.price_per_unit || 1);
-        const baseMinutes = Number(product.market_base_sale_minutes || 30);
-        const priceRatio = Number(listing.price_per_unit || 0) / Math.max(marketPrice, 0.01);
-        const expectedMinutes = Math.max(
-            baseMinutes * Math.pow(Math.max(priceRatio, 0.05), 2),
-            0.5
-        );
+        const finalizesAt = listing.finalizes_at || listing.expires_at;
 
         return `
             <tr>
@@ -460,7 +450,14 @@ function renderListingRows(listings, prices) {
                 <td>${formatNumber(listing.remaining_quantity, 0)} ${escapeHtml(product.unit || '')}</td>
                 <td>${formatCurrency(listing.price_per_unit)}</td>
                 <td>${formatCurrency(listing.total_revenue)}</td>
-                <td>${formatSaleTime(expectedMinutes)}</td>
+                <td>
+                    <span
+                        data-market-countdown
+                        data-finalizes-at="${escapeHtml(finalizesAt)}"
+                    >
+                        ${formatCountdown(finalizesAt)}
+                    </span>
+                </td>
                 <td>
                     <button
                         type="button"
@@ -793,10 +790,22 @@ function formatDateTime(date) {
     }).format(date);
 }
 
-function formatSaleTime(minutes) {
-    if (minutes < 60) {
-        return `ca. ${formatNumber(minutes, 1)} Min.`;
-    }
+function formatCountdown(finalizesAt) {
+    const remainingSeconds = Math.max(
+        Math.ceil((new Date(finalizesAt).getTime() - Date.now()) / 1000),
+        0
+    );
+    const hours = Math.floor(remainingSeconds / 3600);
+    const minutes = Math.floor((remainingSeconds % 3600) / 60);
+    const seconds = remainingSeconds % 60;
 
-    return `ca. ${formatNumber(minutes / 60, 1)} Std.`;
+    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 }
+
+function updateMarketCountdowns() {
+    document.querySelectorAll('[data-market-countdown]').forEach(element => {
+        element.textContent = formatCountdown(element.dataset.finalizesAt);
+    });
+}
+
+setInterval(updateMarketCountdowns, 1000);
